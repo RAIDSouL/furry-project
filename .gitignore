@@ -1,3 +1,7 @@
 # Godot 4+ specific ignores
 .godot/
 /android/
+
+# Local tooling (GitHub CLI download, not part of the project)
+gh-cli/
+gh.zip
