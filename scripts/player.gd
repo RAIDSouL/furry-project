@@ -90,10 +90,12 @@ var _has_target: bool = false
 
 
 func _ready() -> void:
-	Input.mouse_mode = Input.MOUSE_MODE_CAPTURED
 	floor_snap_length = 0.3
 	_stamina = max_stamina
 	_health = max_health
+	if not is_multiplayer_authority():
+		return   # remote player: no input/camera/HUD; driven by the synchronizer
+	Input.mouse_mode = Input.MOUSE_MODE_CAPTURED
 	if stamina_bar:
 		stamina_bar.max_value = max_stamina
 		stamina_bar.value = _stamina
@@ -120,6 +122,8 @@ func take_damage(amount: float) -> void:
 
 
 func _unhandled_input(event: InputEvent) -> void:
+	if not is_multiplayer_authority():
+		return
 	if event.is_action_pressed("toggle_mode"):
 		_toggle_mode()
 		return
@@ -251,6 +255,8 @@ func _physics_iso(delta: float) -> void:
 
 
 func _physics_process(delta: float) -> void:
+	if not is_multiplayer_authority():
+		return   # remote players are moved by the MultiplayerSynchronizer
 	if _cam_mode == CamMode.ISO:
 		_physics_iso(delta)
 		return

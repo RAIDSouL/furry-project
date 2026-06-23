@@ -1,40 +1,7 @@
-[gd_scene format=3 uid="uid://h5wmj7kcmy4v"]
+[gd_scene format=3 uid="uid://bhgypin3481uc"]
 
-[ext_resource type="PackedScene" uid="uid://baqp17u8t20o6" path="res://models/vrc1.glb" id="1_inlal"]
-[ext_resource type="Shader" uid="uid://dun3j6mvderfv" path="res://shaders/grid.gdshader" id="1_k2aq1"]
-[ext_resource type="Script" uid="uid://6kfbgd0nmkd0" path="res://scripts/player.gd" id="1_vrd06"]
-
-[sub_resource type="ShaderMaterial" id="ShaderMaterial_pskrv"]
-render_priority = 0
-shader = ExtResource("1_k2aq1")
-shader_parameter/base_color = Color(0.3, 0.33, 0.38, 1)
-shader_parameter/line_color = Color(0.55, 0.62, 0.75, 1)
-shader_parameter/major_color = Color(0.85, 0.9, 1, 1)
-shader_parameter/cell_size = 1.0
-shader_parameter/major_every = 10.0
-shader_parameter/line_thickness = 1.0
-shader_parameter/roughness_val = 0.9
-
-[sub_resource type="PlaneMesh" id="PlaneMesh_k2aq1"]
-size = Vector2(20, 20)
-
-[sub_resource type="BoxShape3D" id="BoxShape3D_pskrv"]
-size = Vector3(20, 0.4, 20)
-
-[sub_resource type="ProceduralSkyMaterial" id="ProceduralSkyMaterial_inlal"]
-sky_top_color = Color(0.38, 0.55, 0.85, 1)
-sky_horizon_color = Color(0.72, 0.78, 0.85, 1)
-ground_bottom_color = Color(0.35, 0.33, 0.3, 1)
-ground_horizon_color = Color(0.65, 0.62, 0.58, 1)
-
-[sub_resource type="Sky" id="Sky_vrd06"]
-sky_material = SubResource("ProceduralSkyMaterial_inlal")
-
-[sub_resource type="Environment" id="Environment_k2aq1"]
-background_mode = 2
-sky = SubResource("Sky_vrd06")
-ambient_light_source = 3
-tonemap_mode = 2
+[ext_resource type="Script" uid="uid://6kfbgd0nmkd0" path="res://scripts/player.gd" id="1_onrkg"]
+[ext_resource type="PackedScene" uid="uid://baqp17u8t20o6" path="res://models/vrc1.glb" id="2_i3pqv"]
 
 [sub_resource type="Animation" id="Animation_u443e"]
 resource_name = "MorphBake"
@@ -2806,161 +2773,40 @@ blend_point_2/node = SubResource("AnimationNodeAnimation_pusve")
 blend_point_2/pos = 2.0
 blend_point_2/name = &"2"
 
-[sub_resource type="BoxShape3D" id="BoxShape3D_vrd06"]
-size = Vector3(62, 5, 1)
+[node name="Player" type="CharacterBody3D" unique_id=1979233521]
+script = ExtResource("1_onrkg")
 
-[sub_resource type="BoxShape3D" id="BoxShape3D_k2aq1"]
-size = Vector3(62, 5, 1)
+[node name="Sketchfab_Scene" parent="." unique_id=2018312896 instance=ExtResource("2_i3pqv")]
 
-[sub_resource type="BoxShape3D" id="BoxShape3D_58igv"]
-size = Vector3(1, 5, 62)
-
-[sub_resource type="BoxShape3D" id="BoxShape3D_pusve"]
-size = Vector3(1, 5, 62)
-
-[node name="Node3D" type="Node3D" unique_id=1030318930]
-
-[node name="Floor" type="StaticBody3D" parent="." unique_id=630434074]
-transform = Transform3D(3, 0, 0, 0, 1, 0, 0, 0, 3, 0, 0, 0)
-
-[node name="FloorMesh" type="MeshInstance3D" parent="Floor" unique_id=781530823]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.0033900738, 0.0028524399, -0.0013536613)
-material_override = SubResource("ShaderMaterial_pskrv")
-mesh = SubResource("PlaneMesh_k2aq1")
-
-[node name="FloorCollision" type="CollisionShape3D" parent="Floor" unique_id=1020650536]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -0.2, 0)
-shape = SubResource("BoxShape3D_pskrv")
-
-[node name="WorldEnvironment" type="WorldEnvironment" parent="." unique_id=1495630855]
-environment = SubResource("Environment_k2aq1")
-
-[node name="Sun" type="DirectionalLight3D" parent="." unique_id=1441709090]
-transform = Transform3D(-0.64278764, 0, -0.76604444, 0, 1, 0, 0.76604444, 0, -0.64278764, 0, 0, 0)
-light_energy = 1.2
-shadow_enabled = true
-
-[node name="Player" type="CharacterBody3D" parent="." unique_id=1094923998]
-script = ExtResource("1_vrd06")
-
-[node name="Sketchfab_Scene" parent="Player" unique_id=2018312896 instance=ExtResource("1_inlal")]
-
-[node name="Sketchfab_model2" type="Node3D" parent="Player/Sketchfab_Scene" unique_id=830191596]
+[node name="Sketchfab_model2" type="Node3D" parent="Sketchfab_Scene" unique_id=1980508762]
 transform = Transform3D(1, 0, 0, 0, 2.220446e-16, 1, 0, -1, 2.220446e-16, 0, 0, 0)
 
-[node name="AnimationPlayer2" type="AnimationPlayer" parent="Player/Sketchfab_Scene" unique_id=387020030]
+[node name="AnimationPlayer2" type="AnimationPlayer" parent="Sketchfab_Scene" unique_id=201969600]
 libraries/ = SubResource("AnimationLibrary_k5g74")
 
-[node name="Collision" type="CollisionShape3D" parent="Player" unique_id=1544898619]
+[node name="Collision" type="CollisionShape3D" parent="." unique_id=587036085]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.9, 0)
 shape = SubResource("CapsuleShape3D_k2aq1")
 
-[node name="SpringArm3D" type="SpringArm3D" parent="Player" unique_id=455101721]
+[node name="SpringArm3D" type="SpringArm3D" parent="." unique_id=586892572]
 transform = Transform3D(1, 0, 0, 0, 0.9781476, 0.2079117, 0, -0.2079117, 0.9781476, 0, 1.5, 0)
 collision_mask = 0
 spring_length = 4.5
 
-[node name="Camera3D" type="Camera3D" parent="Player/SpringArm3D" unique_id=2096539474]
+[node name="Camera3D" type="Camera3D" parent="SpringArm3D" unique_id=1480584033]
 current = true
 fov = 55.0
 
-[node name="AnimPlayer" type="AnimationPlayer" parent="Player" unique_id=49742312]
+[node name="AnimPlayer" type="AnimationPlayer" parent="." unique_id=2145548182]
 root_node = NodePath("../Sketchfab_Scene/Sketchfab_model/root/GLTF_SceneRootNode/Armature_113/GLTF_created_0")
 libraries/ = SubResource("AnimationLibrary_k2aq1")
 
-[node name="AnimTree" type="AnimationTree" parent="Player" unique_id=478322935]
+[node name="AnimTree" type="AnimationTree" parent="." unique_id=439571712]
 root_node = NodePath("../Sketchfab_Scene/Sketchfab_model/root/GLTF_SceneRootNode/Armature_113/GLTF_created_0")
 tree_root = SubResource("AnimationNodeBlendSpace1D_pusve")
 anim_player = NodePath("../AnimPlayer")
 parameters/blend_position = 0.0
 
-[node name="IsoCamera" type="Camera3D" parent="Player" unique_id=1408828170]
+[node name="IsoCamera" type="Camera3D" parent="." unique_id=374927601]
 transform = Transform3D(1, 0, 0, 0, 0.60181504, 0.79863554, 0, -0.79863554, 0.60181504, 0, 16, 12)
 fov = 38.0
-
-[node name="Walls" type="StaticBody3D" parent="." unique_id=526388898]
-
-[node name="WallNorth" type="CollisionShape3D" parent="Walls" unique_id=951449613]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 2.5, 30)
-shape = SubResource("BoxShape3D_vrd06")
-
-[node name="WallSouth" type="CollisionShape3D" parent="Walls" unique_id=1732442184]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 2.5, -30)
-shape = SubResource("BoxShape3D_k2aq1")
-
-[node name="WallEast" type="CollisionShape3D" parent="Walls" unique_id=996753606]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 30, 2.5, 0)
-shape = SubResource("BoxShape3D_58igv")
-
-[node name="WallWest" type="CollisionShape3D" parent="Walls" unique_id=121640439]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -30, 2.5, 0)
-shape = SubResource("BoxShape3D_pusve")
-
-[node name="HUD" type="CanvasLayer" parent="." unique_id=1349687937]
-
-[node name="StaminaBar" type="ProgressBar" parent="HUD" unique_id=642249918]
-modulate = Color(0.45, 0.85, 1, 1)
-anchors_preset = 7
-anchor_left = 0.5
-anchor_top = 1.0
-anchor_right = 0.5
-anchor_bottom = 1.0
-offset_left = -170.0
-offset_top = -48.0
-offset_right = 170.0
-offset_bottom = -26.0
-mouse_filter = 2
-value = 100.0
-show_percentage = false
-
-[node name="StaminaLabel" type="Label" parent="HUD" unique_id=258000190]
-anchors_preset = 7
-anchor_left = 0.5
-anchor_top = 1.0
-anchor_right = 0.5
-anchor_bottom = 1.0
-offset_left = -170.0
-offset_top = -68.0
-offset_right = 170.0
-offset_bottom = -50.0
-theme_override_font_sizes/font_size = 12
-text = "STAMINA"
-
-[node name="HealthBar" type="ProgressBar" parent="HUD" unique_id=1230946986]
-modulate = Color(1, 0.35, 0.35, 1)
-anchors_preset = 7
-anchor_left = 0.5
-anchor_top = 1.0
-anchor_right = 0.5
-anchor_bottom = 1.0
-offset_left = -170.0
-offset_top = -92.0
-offset_right = 170.0
-offset_bottom = -74.0
-mouse_filter = 2
-value = 100.0
-show_percentage = false
-
-[node name="HealthLabel" type="Label" parent="HUD" unique_id=1443781881]
-anchors_preset = 7
-anchor_left = 0.5
-anchor_top = 1.0
-anchor_right = 0.5
-anchor_bottom = 1.0
-offset_left = -170.0
-offset_top = -112.0
-offset_right = 170.0
-offset_bottom = -94.0
-theme_override_font_sizes/font_size = 12
-text = "HP"
-
-[node name="ModeButton" type="Button" parent="HUD" unique_id=537954475]
-anchors_preset = 1
-anchor_left = 1.0
-anchor_right = 1.0
-offset_left = -176.0
-offset_top = 16.0
-offset_right = -16.0
-offset_bottom = 48.0
-focus_mode = 0
-text = "Mode: TPS"
