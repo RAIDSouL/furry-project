@@ -5,6 +5,42 @@
 
 ---
 
+## 2026-06-24 — Multiplayer Phase 2 (co-op networking)
+
+ต่อจาก groundwork — ตอนนี้ **co-op 3 คนเชื่อมต่อ/spawn/sync ได้จริง** (ENet, direct IP,
+client-authoritative + server relay)
+
+### Transport — `scripts/network_manager.gd` (autoload `NetworkManager`)
+- `host()` / `join(ip)` / `leave()` ผ่าน `ENetMultiplayerPeer`, port **24565**, max **3**
+- เป็น transport ล้วน — การ spawn/รับสัญญาณทำใน `gameplay.gd` ผ่าน `multiplayer.*` signals
+
+### Session controller — `scripts/gameplay.gd` (ติดที่ root ของ `Gameplay.tscn`)
+- หน้าเมนู **Host / Join (มีช่องกรอก IP) / Single Player** + แถบ Status (`NetworkUI`)
+- **server เป็นคนสั่ง spawn** player ต่อ peer (ตั้งชื่อโหนด = peer id), `MultiplayerSpawner`
+  replicate ไปทุก client (รวม late-join), despawn เมื่อ peer หลุด
+- Single Player = host ที่ไม่มีใคร join (ใช้ spawn path เดียวกัน ไม่ต้องแยกเคส)
+- จัดการ `connected_to_server` / `connection_failed` / `server_disconnected` → กลับเมนู
+
+### Per-player networking — `scenes/player.tscn` + `scripts/player.gd`
+- `MultiplayerSynchronizer` sync **position + ทิศโมเดล (`Sketchfab_Scene:rotation`) +
+  anim blend (`AnimTree:parameters/blend_position`)**
+- authority อิงชื่อโหนด: `_enter_tree()` → `set_multiplayer_authority(name.to_int())`
+  (consistent ทุก peer; ชื่อไม่ใช่ตัวเลข = standalone ใช้ค่า default → single-player ยังเล่นได้)
+- remote player: ปิดทั้งสองกล้อง + คง AnimTree active (เล่น anim จากค่า blend ที่ sync มา)
+- HUD (HP/Stamina/ปุ่มโหมด) ผูกเฉพาะ local player — หาโหนดผ่าน `current_scene` (เพราะ player
+  อยู่ใต้ container `Players` แล้ว ไม่ใช่ลูกตรงของ root)
+
+### โครงสร้างฉาก
+- `Gameplay.tscn`: `Players` (container) + `PlayerSpawner` (MultiplayerSpawner) + `NetworkUI`
+  แทน static Player instance เดิม
+
+### หมายเหตุการทดสอบ
+- single-player (ปุ่ม Single Player) ทดสอบผ่าน editor แล้ว — spawn/กล้อง/HUD/anim ปกติ
+- การเชื่อมต่อจริง 2–3 เครื่อง: host เครื่องนึง, อีกเครื่องกรอก IP แล้วกด Join
+  (รันหลาย instance พร้อมกันเพื่อทดสอบในเครื่องเดียวได้)
+
+---
+
 ## 2026-06-24 — Isometric mode, project restructure, multiplayer groundwork
 
 ### โหมดกล้องที่ 2 — Isometric click-to-move (Lost Ark style)
@@ -27,9 +63,8 @@
 - เป้าหมาย: **co-op 3 คน** · transport = **ENet (direct IP)** · **client-authoritative**
 - ใส่ `is_multiplayer_authority()` guard ใน `player.gd` → local peer เท่านั้นที่อ่าน input /
   คุมกล้อง / แสดง HUD (single-player ยังเล่นได้ปกติ)
-- **ค้างไว้ (Phase 2)**: NetworkManager (host / join by IP), หน้าเมนู Host/Join,
-  MultiplayerSpawner (เกิด player ต่อ peer), MultiplayerSynchronizer (sync position/ทิศ/anim/HP),
-  ทำให้ remote player เล่นอนิเมชันจากค่าที่ sync
+- **(ทำต่อใน Phase 2 ด้านบนแล้ว)**: NetworkManager, เมนู Host/Join, MultiplayerSpawner,
+  MultiplayerSynchronizer, remote player เล่น anim จากค่าที่ sync
 
 ---
 

@@ -56,11 +56,18 @@ animations/            ท่าจาก Mixamo (.fbx) ใช้ bake retarget
 addons/godot_mcp/      Godot MCP Pro (ดู CLAUDE.md)
 ```
 
-## สถานะ Multiplayer
+## Multiplayer (co-op 3 คน)
 
-กำลังทำ co-op 3 คน (ENet, client-authoritative) — Phase 1 (แยก player prefab +
-authority guards) เสร็จแล้ว, Phase 2 (networking/spawn/sync) อยู่ระหว่างพัฒนา
-ดูรายละเอียดใน [CHANGELOG.md](CHANGELOG.md)
+เชื่อมต่อได้แล้ว — **ENet, direct IP, client-authoritative**, สูงสุด 3 คน (port `24565`)
+
+- เปิดเกม → เมนูจะขึ้น: **Host** (เป็นเซิร์ฟเวอร์), **Join** (กรอก IP ของ host แล้วต่อ),
+  หรือ **Single Player** (เล่นคนเดียว)
+- ทดสอบในเครื่องเดียว: เปิดเกมหลาย instance — instance แรกกด Host, ที่เหลือกรอก
+  `127.0.0.1` แล้วกด Join
+- server เป็นคน spawn ตัวละครต่อผู้เล่น, ตำแหน่ง/ทิศ/อนิเมชัน sync ข้ามเครื่องผ่าน
+  `MultiplayerSynchronizer`
+
+รายละเอียดสถาปัตยกรรมดูใน [CHANGELOG.md](CHANGELOG.md)
 
 ## พัฒนาด้วย AI (ไม่บังคับ)
 

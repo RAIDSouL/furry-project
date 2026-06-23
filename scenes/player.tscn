@@ -2773,6 +2773,17 @@ blend_point_2/node = SubResource("AnimationNodeAnimation_pusve")
 blend_point_2/pos = 2.0
 blend_point_2/name = &"2"
 
+[sub_resource type="SceneReplicationConfig" id="SceneReplicationConfig_net1"]
+properties/0/path = NodePath(".:position")
+properties/0/spawn = true
+properties/0/replication_mode = 1
+properties/1/path = NodePath("Sketchfab_Scene:rotation")
+properties/1/spawn = true
+properties/1/replication_mode = 1
+properties/2/path = NodePath("AnimTree:parameters/blend_position")
+properties/2/spawn = false
+properties/2/replication_mode = 1
+
 [node name="Player" type="CharacterBody3D" unique_id=1979233521]
 script = ExtResource("1_onrkg")
 
@@ -2810,3 +2821,6 @@ parameters/blend_position = 0.0
 [node name="IsoCamera" type="Camera3D" parent="." unique_id=374927601]
 transform = Transform3D(1, 0, 0, 0, 0.60181504, 0.79863554, 0, -0.79863554, 0.60181504, 0, 16, 12)
 fov = 38.0
+
+[node name="Synchronizer" type="MultiplayerSynchronizer" parent="." unique_id=900100001]
+replication_config = SubResource("SceneReplicationConfig_net1")

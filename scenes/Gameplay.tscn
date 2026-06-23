@@ -2,6 +2,7 @@
 
 [ext_resource type="Shader" uid="uid://dun3j6mvderfv" path="res://shaders/grid.gdshader" id="1_k2aq1"]
 [ext_resource type="PackedScene" uid="uid://bhgypin3481uc" path="res://scenes/player.tscn" id="2_vrd06"]
+[ext_resource type="Script" path="res://scripts/gameplay.gd" id="3_gp"]
 
 [sub_resource type="ShaderMaterial" id="ShaderMaterial_pskrv"]
 render_priority = 0
@@ -48,6 +49,8 @@ size = Vector3(1, 5, 62)
 size = Vector3(1, 5, 62)
 
 [node name="Node3D" type="Node3D" unique_id=1030318930]
+script = ExtResource("3_gp")
+player_scene = ExtResource("2_vrd06")
 
 [node name="Floor" type="StaticBody3D" parent="." unique_id=630434074]
 transform = Transform3D(3, 0, 0, 0, 1, 0, 0, 0, 3, 0, 0, 0)
@@ -69,7 +72,11 @@ transform = Transform3D(-0.64278764, 0, -0.76604444, 0, 1, 0, 0.76604444, 0, -0.
 light_energy = 1.2
 shadow_enabled = true
 
-[node name="Player" parent="." unique_id=1979233521 instance=ExtResource("2_vrd06")]
+[node name="Players" type="Node3D" parent="." unique_id=1979233521]
+
+[node name="PlayerSpawner" type="MultiplayerSpawner" parent="." unique_id=1979233522]
+_spawnable_scenes = PackedStringArray("res://scenes/player.tscn")
+spawn_path = NodePath("../Players")
 
 [node name="Walls" type="StaticBody3D" parent="." unique_id=526388898]
 
@@ -157,3 +164,65 @@ offset_right = -16.0
 offset_bottom = 48.0
 focus_mode = 0
 text = "Mode: TPS"
+
+[node name="NetworkUI" type="CanvasLayer" parent="." unique_id=700000000]
+
+[node name="Menu" type="Control" parent="NetworkUI" unique_id=700000001]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+
+[node name="Dim" type="ColorRect" parent="NetworkUI/Menu" unique_id=700000002]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+color = Color(0.05, 0.06, 0.09, 0.85)
+
+[node name="Panel" type="PanelContainer" parent="NetworkUI/Menu" unique_id=700000003]
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -150.0
+offset_top = -150.0
+offset_right = 150.0
+offset_bottom = 150.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="VBox" type="VBoxContainer" parent="NetworkUI/Menu/Panel" unique_id=700000004]
+layout_mode = 2
+theme_override_constants/separation = 12
+
+[node name="Title" type="Label" parent="NetworkUI/Menu/Panel/VBox" unique_id=700000005]
+layout_mode = 2
+theme_override_font_sizes/font_size = 22
+horizontal_alignment = 1
+text = "Furry Project — Co-op"
+
+[node name="IP" type="LineEdit" parent="NetworkUI/Menu/Panel/VBox" unique_id=700000006]
+layout_mode = 2
+placeholder_text = "Host IP (default 127.0.0.1)"
+alignment = 1
+
+[node name="HostButton" type="Button" parent="NetworkUI/Menu/Panel/VBox" unique_id=700000007]
+layout_mode = 2
+text = "Host (up to 3)"
+
+[node name="JoinButton" type="Button" parent="NetworkUI/Menu/Panel/VBox" unique_id=700000008]
+layout_mode = 2
+text = "Join"
+
+[node name="SoloButton" type="Button" parent="NetworkUI/Menu/Panel/VBox" unique_id=700000009]
+layout_mode = 2
+text = "Single Player"
+
+[node name="Status" type="Label" parent="NetworkUI/Menu/Panel/VBox" unique_id=700000010]
+layout_mode = 2
+theme_override_font_sizes/font_size = 13
+horizontal_alignment = 1
+text = "Direct IP · ENet · port 24565"

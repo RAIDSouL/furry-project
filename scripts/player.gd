@@ -45,10 +45,13 @@ const DODGE_COSTS := [20.0, 30.0,40.0]   # 1st / 2nd / 3rd+ in a chain
 @onready var spring_arm: SpringArm3D = $SpringArm3D
 @onready var camera: Camera3D = $SpringArm3D/Camera3D
 @onready var anim_tree: AnimationTree = $AnimTree
-@onready var stamina_bar: ProgressBar = get_node_or_null("../HUD/StaminaBar")
-@onready var health_bar: ProgressBar = get_node_or_null("../HUD/HealthBar")
 @onready var iso_camera: Camera3D = $IsoCamera
-@onready var mode_button: Button = get_node_or_null("../HUD/ModeButton")
+
+# HUD nodes (one shared HUD; only the local player binds to it). Resolved in
+# _ready() from the scene root since players live under a Players container.
+var stamina_bar: ProgressBar
+var health_bar: ProgressBar
+var mode_button: Button
 
 var _gravity: float = ProjectSettings.get_setting("physics/3d/default_gravity", 9.81)
 var _yaw: float = PI
@@ -89,13 +92,32 @@ var _move_target: Vector3 = Vector3.ZERO
 var _has_target: bool = false
 
 
+func _enter_tree() -> void:
+	# Players are spawned named after the owning peer id (see gameplay.gd), so the
+	# authority is consistent on every peer. A non-numeric name (running the scene
+	# standalone) leaves the default authority so single-player still works.
+	var id := str(name).to_int()
+	if id > 0:
+		set_multiplayer_authority(id)
+
+
 func _ready() -> void:
 	floor_snap_length = 0.3
 	_stamina = max_stamina
 	_health = max_health
 	if not is_multiplayer_authority():
-		return   # remote player: no input/camera/HUD; driven by the synchronizer
+		# Remote player: no input/camera/HUD. The synchronizer drives position,
+		# facing and the anim blend, so keep the AnimTree running and cameras off.
+		camera.current = false
+		iso_camera.current = false
+		anim_tree.active = true
+		return
 	Input.mouse_mode = Input.MOUSE_MODE_CAPTURED
+	var root := get_tree().current_scene
+	if root:
+		stamina_bar = root.get_node_or_null("HUD/StaminaBar")
+		health_bar = root.get_node_or_null("HUD/HealthBar")
+		mode_button = root.get_node_or_null("HUD/ModeButton")
 	if stamina_bar:
 		stamina_bar.max_value = max_stamina
 		stamina_bar.value = _stamina
