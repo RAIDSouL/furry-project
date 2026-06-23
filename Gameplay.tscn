@@ -2794,14 +2794,17 @@ animation = &"walk"
 animation = &"run"
 
 [sub_resource type="AnimationNodeBlendSpace1D" id="AnimationNodeBlendSpace1D_pusve"]
-blend_point_0/node = SubResource("AnimationNodeAnimation_pskrv")
-blend_point_0/pos = 0.0
-blend_point_1/node = SubResource("AnimationNodeAnimation_58igv")
-blend_point_1/pos = 1.0
-blend_point_2/node = SubResource("AnimationNodeAnimation_pusve")
-blend_point_2/pos = 2.0
 min_space = 0.0
 max_space = 2.0
+blend_point_0/node = SubResource("AnimationNodeAnimation_pskrv")
+blend_point_0/pos = 0.0
+blend_point_0/name = &"0"
+blend_point_1/node = SubResource("AnimationNodeAnimation_58igv")
+blend_point_1/pos = 1.0
+blend_point_1/name = &"1"
+blend_point_2/node = SubResource("AnimationNodeAnimation_pusve")
+blend_point_2/pos = 2.0
+blend_point_2/name = &"2"
 
 [sub_resource type="BoxShape3D" id="BoxShape3D_vrd06"]
 size = Vector3(62, 5, 1)
@@ -2871,6 +2874,10 @@ tree_root = SubResource("AnimationNodeBlendSpace1D_pusve")
 anim_player = NodePath("../AnimPlayer")
 parameters/blend_position = 0.0
 
+[node name="IsoCamera" type="Camera3D" parent="Player" unique_id=1408828170]
+transform = Transform3D(1, 0, 0, 0, 0.60181504, 0.79863554, 0, -0.79863554, 0.60181504, 0, 16, 12)
+fov = 38.0
+
 [node name="Walls" type="StaticBody3D" parent="." unique_id=526388898]
 
 [node name="WallNorth" type="CollisionShape3D" parent="Walls" unique_id=951449613]
@@ -2902,6 +2909,7 @@ offset_left = -170.0
 offset_top = -48.0
 offset_right = 170.0
 offset_bottom = -26.0
+mouse_filter = 2
 value = 100.0
 show_percentage = false
 
@@ -2929,6 +2937,7 @@ offset_left = -170.0
 offset_top = -92.0
 offset_right = 170.0
 offset_bottom = -74.0
+mouse_filter = 2
 value = 100.0
 show_percentage = false
 
@@ -2944,3 +2953,14 @@ offset_right = 170.0
 offset_bottom = -94.0
 theme_override_font_sizes/font_size = 12
 text = "HP"
+
+[node name="ModeButton" type="Button" parent="HUD" unique_id=537954475]
+anchors_preset = 1
+anchor_left = 1.0
+anchor_right = 1.0
+offset_left = -176.0
+offset_top = 16.0
+offset_right = -16.0
+offset_bottom = 48.0
+focus_mode = 0
+text = "Mode: TPS"

@@ -7,6 +7,7 @@ extends CharacterBody3D
 ## height), Mouse = look, Esc = free cursor.
 
 enum State { IDLE, MOVE, JUMP, DODGE }
+enum CamMode { TPS, ISO }   # third-person  |  isometric click-to-move (Lost Ark style)
 
 @export_group("Movement")
 @export var walk_speed: float = 5.0
@@ -15,6 +16,7 @@ enum State { IDLE, MOVE, JUMP, DODGE }
 @export var stop_time: float = 0.05       # faster smoothing when stopping (crisp stop)
 @export var rotation_rate: float = 15.0
 @export var mouse_sensitivity: float = 0.0025
+@export var iso_move_speed: float = 7.0   # click-to-move speed in isometric mode
 
 @export_group("Jump")
 @export var jump_height: float = 2.0
@@ -45,6 +47,8 @@ const DODGE_COSTS := [20.0, 30.0,40.0]   # 1st / 2nd / 3rd+ in a chain
 @onready var anim_tree: AnimationTree = $AnimTree
 @onready var stamina_bar: ProgressBar = get_node_or_null("../HUD/StaminaBar")
 @onready var health_bar: ProgressBar = get_node_or_null("../HUD/HealthBar")
+@onready var iso_camera: Camera3D = $IsoCamera
+@onready var mode_button: Button = get_node_or_null("../HUD/ModeButton")
 
 var _gravity: float = ProjectSettings.get_setting("physics/3d/default_gravity", 9.81)
 var _yaw: float = PI
@@ -79,6 +83,11 @@ var _health: float = 100.0
 
 var _last_log: String = ""
 
+# Camera / control mode.
+var _cam_mode: CamMode = CamMode.TPS
+var _move_target: Vector3 = Vector3.ZERO
+var _has_target: bool = false
+
 
 func _ready() -> void:
 	Input.mouse_mode = Input.MOUSE_MODE_CAPTURED
@@ -91,6 +100,9 @@ func _ready() -> void:
 	if health_bar:
 		health_bar.max_value = max_health
 		health_bar.value = _health
+	if mode_button:
+		mode_button.pressed.connect(_toggle_mode)
+	_apply_mode()
 
 
 ## Read by combat code: true during a dodge's i-frame window.
@@ -108,14 +120,22 @@ func take_damage(amount: float) -> void:
 
 
 func _unhandled_input(event: InputEvent) -> void:
-	if event is InputEventMouseMotion and Input.mouse_mode == Input.MOUSE_MODE_CAPTURED:
-		_yaw -= event.relative.x * mouse_sensitivity
-		_pitch = clampf(_pitch - event.relative.y * mouse_sensitivity, -1.2, 0.4)
-	elif event.is_action_pressed("ui_cancel"):
-		if Input.mouse_mode == Input.MOUSE_MODE_CAPTURED:
-			Input.mouse_mode = Input.MOUSE_MODE_VISIBLE
-		else:
-			Input.mouse_mode = Input.MOUSE_MODE_CAPTURED
+	if event.is_action_pressed("toggle_mode"):
+		_toggle_mode()
+		return
+	if _cam_mode == CamMode.TPS:
+		if event is InputEventMouseMotion and Input.mouse_mode == Input.MOUSE_MODE_CAPTURED:
+			_yaw -= event.relative.x * mouse_sensitivity
+			_pitch = clampf(_pitch - event.relative.y * mouse_sensitivity, -1.2, 0.4)
+		elif event.is_action_pressed("ui_cancel"):
+			if Input.mouse_mode == Input.MOUSE_MODE_CAPTURED:
+				Input.mouse_mode = Input.MOUSE_MODE_VISIBLE
+			else:
+				Input.mouse_mode = Input.MOUSE_MODE_CAPTURED
+	else:
+		# ISO: right-click the ground to set a move target.
+		if event is InputEventMouseButton and event.pressed and event.button_index == MOUSE_BUTTON_RIGHT:
+			_click_to_move(event.position)
 
 
 func _face(dir: Vector3, delta: float) -> void:
@@ -149,7 +169,91 @@ func _try_dodge(move_dir: Vector3, has_input: bool) -> bool:
 	return true
 
 
+func _toggle_mode() -> void:
+	_cam_mode = CamMode.ISO if _cam_mode == CamMode.TPS else CamMode.TPS
+	_apply_mode()
+
+
+func _apply_mode() -> void:
+	_has_target = false
+	if _cam_mode == CamMode.TPS:
+		camera.current = true
+		iso_camera.current = false
+		Input.mouse_mode = Input.MOUSE_MODE_CAPTURED
+		if mode_button: mode_button.text = "Mode: TPS"
+	else:
+		iso_camera.current = true
+		camera.current = false
+		Input.mouse_mode = Input.MOUSE_MODE_VISIBLE
+		_state = State.IDLE
+		velocity.x = 0.0
+		velocity.z = 0.0
+		if mode_button: mode_button.text = "Mode: ISO"
+
+
+func _click_to_move(screen_pos: Vector2) -> void:
+	var from := iso_camera.project_ray_origin(screen_pos)
+	var dir := iso_camera.project_ray_normal(screen_pos)
+	var space := get_world_3d().direct_space_state
+	var q := PhysicsRayQueryParameters3D.create(from, from + dir * 1000.0)
+	q.exclude = [get_rid()]
+	var hit := space.intersect_ray(q)
+	if hit:
+		_move_target = hit.position
+		_has_target = true
+
+
+func _physics_iso(delta: float) -> void:
+	# Gravity + ground stick.
+	if is_on_floor():
+		if velocity.y < 0.0:
+			velocity.y = -2.0
+	else:
+		velocity.y -= _gravity * delta
+
+	# Move toward the clicked target, then stop.
+	if _has_target:
+		var to := _move_target - global_position
+		to.y = 0.0
+		if to.length() > 0.4:
+			var dir := to.normalized()
+			velocity.x = dir.x * iso_move_speed
+			velocity.z = dir.z * iso_move_speed
+			_face(dir, delta)
+		else:
+			_has_target = false
+	if not _has_target:
+		velocity.x = move_toward(velocity.x, 0.0, iso_move_speed)
+		velocity.z = move_toward(velocity.z, 0.0, iso_move_speed)
+
+	move_and_slide()
+
+	# Stamina slowly refills in this mode.
+	_regen_timer = maxf(_regen_timer - delta, 0.0)
+	if _regen_timer <= 0.0:
+		_stamina = minf(_stamina + stamina_regen * delta, max_stamina)
+	if stamina_bar:
+		stamina_bar.value = _stamina
+
+	# Animation blend by actual speed.
+	anim_tree.active = true
+	var hspeed := Vector2(velocity.x, velocity.z).length()
+	var tb: float
+	if hspeed <= 0.1:
+		tb = 0.0
+	elif hspeed <= walk_speed:
+		tb = hspeed / walk_speed
+	else:
+		tb = 1.0 + (hspeed - walk_speed) / (sprint_speed - walk_speed)
+	tb = clampf(tb, 0.0, 2.0)
+	_blend = move_toward(_blend, tb, delta * 12.0)
+	anim_tree.set("parameters/blend_position", _blend)
+
+
 func _physics_process(delta: float) -> void:
+	if _cam_mode == CamMode.ISO:
+		_physics_iso(delta)
+		return
 	spring_arm.rotation.y = _yaw
 	spring_arm.rotation.x = _pitch
 
