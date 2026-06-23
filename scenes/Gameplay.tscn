@@ -211,7 +211,7 @@ alignment = 1
 
 [node name="HostButton" type="Button" parent="NetworkUI/Menu/Panel/VBox" unique_id=700000007]
 layout_mode = 2
-text = "Host (up to 3)"
+text = "Host (up to 4)"
 
 [node name="JoinButton" type="Button" parent="NetworkUI/Menu/Panel/VBox" unique_id=700000008]
 layout_mode = 2

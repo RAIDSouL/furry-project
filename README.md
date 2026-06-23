@@ -56,9 +56,9 @@ animations/            ท่าจาก Mixamo (.fbx) ใช้ bake retarget
 addons/godot_mcp/      Godot MCP Pro (ดู CLAUDE.md)
 ```
 
-## Multiplayer (co-op 3 คน)
+## Multiplayer (co-op 1–4 คน)
 
-เชื่อมต่อได้แล้ว — **ENet, direct IP, client-authoritative**, สูงสุด 3 คน (port `24565`)
+เชื่อมต่อได้แล้ว — **ENet, direct IP, client-authoritative**, สูงสุด 4 คน (port `24565`)
 
 - เปิดเกม → เมนูจะขึ้น: **Host** (เป็นเซิร์ฟเวอร์), **Join** (กรอก IP ของ host แล้วต่อ),
   หรือ **Single Player** (เล่นคนเดียว)

@@ -7,11 +7,11 @@
 
 ## 2026-06-24 — Multiplayer Phase 2 (co-op networking)
 
-ต่อจาก groundwork — ตอนนี้ **co-op 3 คนเชื่อมต่อ/spawn/sync ได้จริง** (ENet, direct IP,
+ต่อจาก groundwork — ตอนนี้ **co-op 1–4 คนเชื่อมต่อ/spawn/sync ได้จริง** (ENet, direct IP,
 client-authoritative + server relay)
 
 ### Transport — `scripts/network_manager.gd` (autoload `NetworkManager`)
-- `host()` / `join(ip)` / `leave()` ผ่าน `ENetMultiplayerPeer`, port **24565**, max **3**
+- `host()` / `join(ip)` / `leave()` ผ่าน `ENetMultiplayerPeer`, port **24565**, สูงสุด **4 คน**
 - เป็น transport ล้วน — การ spawn/รับสัญญาณทำใน `gameplay.gd` ผ่าน `multiplayer.*` signals
 
 ### Session controller — `scripts/gameplay.gd` (ติดที่ root ของ `Gameplay.tscn`)

@@ -8,11 +8,12 @@ extends Node3D
 
 @export var player_scene: PackedScene
 
-# Spread spawn points so co-op players don't overlap.
+# Spread spawn points (a square) so co-op players don't overlap — one per player.
 const SPAWN_POINTS := [
-	Vector3(0.0, 1.0, 0.0),
-	Vector3(2.5, 1.0, 0.0),
-	Vector3(-2.5, 1.0, 0.0),
+	Vector3(2.0, 1.0, 2.0),
+	Vector3(-2.0, 1.0, 2.0),
+	Vector3(2.0, 1.0, -2.0),
+	Vector3(-2.0, 1.0, -2.0),
 ]
 
 @onready var _net: Node = get_node("/root/NetworkManager")

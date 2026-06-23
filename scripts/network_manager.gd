@@ -7,13 +7,14 @@ extends Node
 ## client's MultiplayerSynchronizer reaches the others through the host.
 
 const PORT := 24565
-const MAX_PLAYERS := 3            # co-op cap (server counts as one)
+const MAX_PLAYERS := 4            # total players, including the host
 const DEFAULT_IP := "127.0.0.1"
 
 
 func host(port: int = PORT) -> Error:
 	var peer := ENetMultiplayerPeer.new()
-	var err := peer.create_server(port, MAX_PLAYERS)
+	# create_server's max_clients excludes the host, so subtract one.
+	var err := peer.create_server(port, MAX_PLAYERS - 1)
 	if err != OK:
 		return err
 	multiplayer.multiplayer_peer = peer
