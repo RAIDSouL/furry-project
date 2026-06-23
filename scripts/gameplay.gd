@@ -46,11 +46,10 @@ func _on_host() -> void:
 
 
 func _on_solo() -> void:
-	# Single-player is just a host nobody joins — same spawn path, no special case.
-	if _net.host() == OK:
-		_start_as_server()
-	else:
-		status.text = "Could not start"
+	# Single-player needs no networking — spawn a local player directly so it works
+	# even when the co-op port is busy (e.g. another instance is already hosting).
+	menu.hide()
+	_spawn_player(1)
 
 
 func _on_join() -> void:
