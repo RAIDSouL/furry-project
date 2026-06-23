@@ -212,6 +212,10 @@ func _save_scene(params: Dictionary) -> Dictionary:
 	var path: String = optional_string(params, "path", "")
 	if path.is_empty():
 		path = root.scene_file_path
+		# Imported scenes such as FBX are source assets, not writable Godot
+		# scenes. Save edits beside the source as a native editable scene.
+		if not path.is_empty() and path.get_extension().to_lower() not in ["tscn", "scn"]:
+			path = path.get_basename() + ".tscn"
 
 	if path.is_empty():
 		return error_invalid_params("No save path specified and scene has no existing path")
@@ -244,7 +248,12 @@ func _save_scene(params: Dictionary) -> Dictionary:
 	if err != OK:
 		return error_internal("Failed to save scene via %s: %s" % [save_method, error_string(err)])
 
-	return success({"path": normalized_path, "saved": true, "method": save_method})
+	return success({
+		"path": normalized_path,
+		"saved": true,
+		"method": save_method,
+		"source_scene": root.scene_file_path,
+	})
 
 
 func _get_scene_exports(params: Dictionary) -> Dictionary:

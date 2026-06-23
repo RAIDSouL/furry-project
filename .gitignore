@@ -1,7 +1,33 @@
-# Godot 4+ specific ignores
+# Godot 4+ editor cache
 .godot/
 /android/
+.nomedia
 
 # Local tooling (GitHub CLI download, not part of the project)
 gh-cli/
 gh.zip
+
+# Export config (อาจมี credential)
+export.cfg
+export_credentials.cfg
+
+# Imported translations (auto-gen จาก CSV)
+*.translation
+
+# OS junk files
+.DS_Store
+Thumbs.db
+Desktop.ini
+*.swp
+*~
+
+# Art source files (เก็บเฉพาะ exported .png/.glb/.ogg)
+*.blend1
+*.blend2
+*.blend?
+*.psd
+*.psb
+*.kra
+*.spp
+*.ai
+*.kra~

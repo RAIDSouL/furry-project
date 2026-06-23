@@ -1,0 +1,380 @@
+[gd_scene format=3 uid="uid://dqehd4xadhp0h"]
+
+[sub_resource type="StandardMaterial3D" id="MatStone"]
+albedo_color = Color(0.71990997, 0.7560201, 0.8254812, 1)
+roughness = 0.9
+
+[sub_resource type="StandardMaterial3D" id="MatRed"]
+albedo_color = Color(0.78, 0.16, 0.11, 1)
+roughness = 0.75
+
+[sub_resource type="StandardMaterial3D" id="MatRoof"]
+albedo_color = Color(0.11, 0.22, 0.27, 1)
+roughness = 0.8
+
+[sub_resource type="StandardMaterial3D" id="MatWood"]
+albedo_color = Color(0.38, 0.22, 0.12, 1)
+roughness = 0.9
+
+[node name="FoxShrineBlockout" type="Node3D" unique_id=1928756620]
+
+[node name="UpperGarden2" type="CSGBox3D" parent="." unique_id=386635735]
+transform = Transform3D(2.3818455, 0, 0, 0, 0.62259376, 0, 0, 0, 2.6797984, 58.8526, 4.1732597, -76.83984)
+use_collision = true
+size = Vector3(9.569214, 22.49121, 30.072754)
+material = SubResource("MatStone")
+
+[node name="UpperGarden3" type="CSGBox3D" parent="." unique_id=1356065492]
+transform = Transform3D(2.3818455, 0, 0, 0, 0.62259376, 0, 0, 0, 2.6797984, -57.402588, 0.57691693, -83.86546)
+use_collision = true
+size = Vector3(16.26207, 3.402832, 36.00305)
+material = SubResource("MatStone")
+
+[node name="UpperGarden6" type="CSGBox3D" parent="." unique_id=1614113066]
+transform = Transform3D(2.3818455, 0, 0, 0, 0.62259376, 0, 0, 0, 2.6797984, -56.517723, 2.0042317, -43.06722)
+use_collision = true
+size = Vector3(4.665859, 3.402832, 12.131195)
+material = SubResource("MatStone")
+
+[node name="UpperGarden4" type="CSGBox3D" parent="." unique_id=390691194]
+transform = Transform3D(0.82152957, 0, 0, 0, 0.42610395, 0, 0, 0, 2.6797984, 37.318054, 3.0653553, -60.96515)
+use_collision = true
+size = Vector3(15.573334, 22.14325, 4.562317)
+material = SubResource("MatStone")
+
+[node name="UpperGarden5" type="CSGBox3D" parent="." unique_id=1048477666]
+transform = Transform3D(0.82152957, 0, 0, 0, 0.42610395, 0, 0, 0, 2.6797984, -55.12526, 10.053825, -63.58125)
+use_collision = true
+size = Vector3(15.573334, 37.266724, 4.562317)
+material = SubResource("MatStone")
+
+[node name="Perimeter" type="Node3D" parent="." unique_id=550202031]
+
+[node name="EntranceTorii" type="Node3D" parent="." unique_id=1901200522]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 9.799126)
+
+[node name="PostL" type="CSGBox3D" parent="EntranceTorii" unique_id=650556084]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -7, 4, 34)
+use_collision = true
+size = Vector3(1.4, 8, 1.4)
+material = SubResource("MatRed")
+
+[node name="PostR" type="CSGBox3D" parent="EntranceTorii" unique_id=2090544414]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 7, 4, 34)
+use_collision = true
+size = Vector3(1.4, 8, 1.4)
+material = SubResource("MatRed")
+
+[node name="Lintel" type="CSGBox3D" parent="EntranceTorii" unique_id=496661644]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 8, 34)
+use_collision = true
+size = Vector3(18, 1.2, 1.8)
+material = SubResource("MatRed")
+
+[node name="TopLintel" type="CSGBox3D" parent="EntranceTorii" unique_id=1817163239]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 9.3, 34)
+use_collision = true
+size = Vector3(21, 0.7, 2.2)
+material = SubResource("MatRoof")
+
+[node name="EntranceTorii2" type="Node3D" parent="." unique_id=1880292534]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -57.82312)
+
+[node name="PostL" type="CSGBox3D" parent="EntranceTorii2" unique_id=675018417]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -7, 4, 34)
+use_collision = true
+size = Vector3(1.4, 8, 1.4)
+material = SubResource("MatRed")
+
+[node name="PostR" type="CSGBox3D" parent="EntranceTorii2" unique_id=1987340443]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 7, 4, 34)
+use_collision = true
+size = Vector3(1.4, 8, 1.4)
+material = SubResource("MatRed")
+
+[node name="Lintel" type="CSGBox3D" parent="EntranceTorii2" unique_id=948818207]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 8, 34)
+use_collision = true
+size = Vector3(18, 1.2, 1.8)
+material = SubResource("MatRed")
+
+[node name="TopLintel" type="CSGBox3D" parent="EntranceTorii2" unique_id=21133861]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 9.3, 34)
+use_collision = true
+size = Vector3(21, 0.7, 2.2)
+material = SubResource("MatRoof")
+
+[node name="BossArena" type="Node3D" parent="." unique_id=706580533]
+transform = Transform3D(1.115, 0, 0, 0, 1.115, 0, 0, 0, 1.115, 0, 0, 0)
+
+[node name="ArenaSlab" type="CSGBox3D" parent="BossArena" unique_id=1872710729]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.25, 14)
+use_collision = true
+size = Vector3(34, 0.5, 32)
+material = SubResource("MatStone")
+
+[node name="ArenaEdgeL" type="CSGBox3D" parent="BossArena" unique_id=191378715]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -17, 0.8, 14)
+use_collision = true
+size = Vector3(0.7, 1.6, 32)
+material = SubResource("MatRed")
+
+[node name="ArenaEdgeR" type="CSGBox3D" parent="BossArena" unique_id=1509603140]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 17, 0.8, 14)
+use_collision = true
+size = Vector3(0.7, 1.6, 32)
+material = SubResource("MatRed")
+
+[node name="PrayerApproach" type="Node3D" parent="." unique_id=1690860556]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 6.9956436, -64.33632)
+
+[node name="Landing" type="CSGBox3D" parent="PrayerApproach" unique_id=561036033]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1, -5)
+use_collision = true
+size = Vector3(18, 2, 8)
+material = SubResource("MatStone")
+
+[node name="Step1" type="CSGBox3D" parent="PrayerApproach" unique_id=1559892415]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.5, -10)
+use_collision = true
+size = Vector3(14, 1, 2)
+material = SubResource("MatStone")
+
+[node name="Step2" type="CSGBox3D" parent="PrayerApproach" unique_id=1434332385]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 2, -12)
+use_collision = true
+size = Vector3(14, 2, 2)
+material = SubResource("MatStone")
+
+[node name="Step3" type="CSGBox3D" parent="PrayerApproach" unique_id=1280910938]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 2.5, -14)
+use_collision = true
+size = Vector3(14, 3, 2)
+material = SubResource("MatStone")
+
+[node name="Step4" type="CSGBox3D" parent="PrayerApproach" unique_id=546357353]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 3, -16)
+use_collision = true
+size = Vector3(14, 4, 2)
+material = SubResource("MatStone")
+
+[node name="Step5" type="CSGBox3D" parent="PrayerApproach" unique_id=1403831741]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -3.0394917, 5.880928)
+use_collision = true
+size = Vector3(14, 1, 2)
+material = SubResource("MatStone")
+
+[node name="Step6" type="CSGBox3D" parent="PrayerApproach" unique_id=816356426]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -2.5394917, 3.880928)
+use_collision = true
+size = Vector3(14, 2, 2)
+material = SubResource("MatStone")
+
+[node name="Step7" type="CSGBox3D" parent="PrayerApproach" unique_id=485540803]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -2.0394917, 1.880928)
+use_collision = true
+size = Vector3(14, 3, 2)
+material = SubResource("MatStone")
+
+[node name="Step8" type="CSGBox3D" parent="PrayerApproach" unique_id=1333780549]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -1.5394917, -0.11907196)
+use_collision = true
+size = Vector3(14, 4, 2)
+material = SubResource("MatStone")
+
+[node name="Step9" type="CSGBox3D" parent="PrayerApproach" unique_id=1451217056]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -6.629982, 23.429249)
+use_collision = true
+size = Vector3(14, 1, 2)
+material = SubResource("MatStone")
+
+[node name="Step10" type="CSGBox3D" parent="PrayerApproach" unique_id=610810812]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -6.129982, 21.429249)
+use_collision = true
+size = Vector3(14, 2, 2)
+material = SubResource("MatStone")
+
+[node name="Step11" type="CSGBox3D" parent="PrayerApproach" unique_id=1042051617]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -5.629982, 19.429249)
+use_collision = true
+size = Vector3(14, 3, 2)
+material = SubResource("MatStone")
+
+[node name="Step12" type="CSGBox3D" parent="PrayerApproach" unique_id=1186192836]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -5.129982, 17.429249)
+use_collision = true
+size = Vector3(14, 4, 2)
+material = SubResource("MatStone")
+
+[node name="UpperGarden" type="CSGBox3D" parent="PrayerApproach" unique_id=26389504]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -2.5861206, -26)
+use_collision = true
+size = Vector3(52, 13.172241, 20)
+material = SubResource("MatStone")
+
+[node name="UpperGarden2" type="CSGBox3D" parent="PrayerApproach" unique_id=349260984]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -4.2064457, -15.66317)
+use_collision = true
+size = Vector3(52, 10.0338745, 29.364746)
+material = SubResource("MatStone")
+
+[node name="UpperGarden3" type="CSGBox3D" parent="PrayerApproach" unique_id=1335171484]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -5.810602, 3.3549118)
+use_collision = true
+size = Vector3(52, 4.763153, 29.364746)
+material = SubResource("MatStone")
+
+[node name="PrayerGatePostL" type="CSGBox3D" parent="PrayerApproach" unique_id=31707633]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -6, 6, -17)
+use_collision = true
+size = Vector3(1.2, 8, 1.2)
+material = SubResource("MatRed")
+
+[node name="PrayerGatePostR" type="CSGBox3D" parent="PrayerApproach" unique_id=1083334827]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 6, 6, -17)
+use_collision = true
+size = Vector3(1.2, 8, 1.2)
+material = SubResource("MatRed")
+
+[node name="PrayerGateRoof" type="CSGBox3D" parent="PrayerApproach" unique_id=640444796]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 9.5, -17)
+use_collision = true
+size = Vector3(16, 1.2, 3)
+material = SubResource("MatRoof")
+
+[node name="MainShrine" type="Node3D" parent="." unique_id=924274831]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 6.9956436, -64.33632)
+
+[node name="ShrineBody" type="CSGBox3D" parent="MainShrine" unique_id=106666194]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 7, -31)
+use_collision = true
+size = Vector3(26, 10, 11)
+material = SubResource("MatWood")
+
+[node name="ShrineRoof" type="CSGBox3D" parent="MainShrine" unique_id=1739263916]
+transform = Transform3D(0.9961947, -0.08715574, 0, 0.08715574, 0.9961947, 0, 0, 0, 1, 0, 12.5, -31)
+use_collision = true
+size = Vector3(31, 1.4, 15)
+material = SubResource("MatRoof")
+
+[node name="ShrineRoofCap" type="CSGBox3D" parent="MainShrine" unique_id=1487472337]
+transform = Transform3D(0.9975641, 0.06975647, 0, -0.06975647, 0.9975641, 0, 0, 0, 1, 0, 14, -31)
+use_collision = true
+size = Vector3(24, 1.1, 12)
+material = SubResource("MatRoof")
+
+[node name="ColumnL" type="CSGBox3D" parent="MainShrine" unique_id=1456894115]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -9, 7, -24.8)
+use_collision = true
+size = Vector3(1.2, 8, 1.2)
+material = SubResource("MatRed")
+
+[node name="ColumnR" type="CSGBox3D" parent="MainShrine" unique_id=511931636]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 9, 7, -24.8)
+use_collision = true
+size = Vector3(1.2, 8, 1.2)
+material = SubResource("MatRed")
+
+[node name="ShopRestArea" type="Node3D" parent="." unique_id=272734493]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 6.2840805, 0, 0)
+
+[node name="ShopPlatform" type="CSGBox3D" parent="ShopRestArea" unique_id=407786140]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 25, 0.5, 12)
+use_collision = true
+size = Vector3(14, 1, 34)
+material = SubResource("MatStone")
+
+[node name="ShopBack" type="CSGBox3D" parent="ShopRestArea" unique_id=1242580388]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 30, 4, 12)
+use_collision = true
+size = Vector3(3, 8, 32)
+material = SubResource("MatWood")
+
+[node name="ShopRoof" type="CSGBox3D" parent="ShopRestArea" unique_id=2012268330]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 26, 8.3, 12)
+use_collision = true
+size = Vector3(14, 1, 35)
+material = SubResource("MatRoof")
+
+[node name="CounterA" type="CSGBox3D" parent="ShopRestArea" unique_id=710783702]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 22.5, 1.5, 1)
+use_collision = true
+size = Vector3(5, 3, 2)
+material = SubResource("MatWood")
+
+[node name="CounterB" type="CSGBox3D" parent="ShopRestArea" unique_id=1549486334]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 22.5, 1.5, 10)
+use_collision = true
+size = Vector3(5, 3, 2)
+material = SubResource("MatWood")
+
+[node name="CounterC" type="CSGBox3D" parent="ShopRestArea" unique_id=1137938407]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 22.5, 1.5, 19)
+use_collision = true
+size = Vector3(5, 3, 2)
+material = SubResource("MatWood")
+
+[node name="CounterD" type="CSGBox3D" parent="ShopRestArea" unique_id=50648795]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 22.5, 1.5, 28)
+use_collision = true
+size = Vector3(5, 3, 2)
+material = SubResource("MatWood")
+
+[node name="PagodaZone" type="Node3D" parent="." unique_id=526099336]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -19.534836, 0, 20.7556)
+
+[node name="PagodaBase" type="CSGBox3D" parent="PagodaZone" unique_id=84631179]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -24, 1, 10)
+use_collision = true
+size = Vector3(15, 2, 19)
+material = SubResource("MatStone")
+
+[node name="PagodaTier1" type="CSGBox3D" parent="PagodaZone" unique_id=516990030]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -24, 5, 10)
+use_collision = true
+size = Vector3(11, 6, 11)
+material = SubResource("MatWood")
+
+[node name="PagodaRoof1" type="CSGBox3D" parent="PagodaZone" unique_id=1612838751]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -24, 8.2, 10)
+use_collision = true
+size = Vector3(16, 1, 16)
+material = SubResource("MatRoof")
+
+[node name="PagodaTier2" type="CSGBox3D" parent="PagodaZone" unique_id=1948716917]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -24, 11, 10)
+use_collision = true
+size = Vector3(9, 5, 9)
+material = SubResource("MatWood")
+
+[node name="PagodaRoof2" type="CSGBox3D" parent="PagodaZone" unique_id=2109452791]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -24, 13.8, 10)
+use_collision = true
+size = Vector3(14, 1, 14)
+material = SubResource("MatRoof")
+
+[node name="PagodaTier3" type="CSGBox3D" parent="PagodaZone" unique_id=347806818]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -24, 16, 10)
+use_collision = true
+size = Vector3(7, 4, 7)
+material = SubResource("MatWood")
+
+[node name="PagodaRoof3" type="CSGBox3D" parent="PagodaZone" unique_id=1874802556]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -24, 18.4, 10)
+use_collision = true
+size = Vector3(12, 1, 12)
+material = SubResource("MatRoof")
+
+[node name="PagodaTop" type="CSGBox3D" parent="PagodaZone" unique_id=1234814481]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -24, 21, 10)
+use_collision = true
+size = Vector3(5, 4, 5)
+material = SubResource("MatWood")
+
+[node name="PagodaRoofTop" type="CSGBox3D" parent="PagodaZone" unique_id=1704243989]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -24, 23.3, 10)
+use_collision = true
+size = Vector3(9, 0.9, 9)
+material = SubResource("MatRoof")
+
+[node name="SideRoutes" type="Node3D" parent="." unique_id=1295897822]

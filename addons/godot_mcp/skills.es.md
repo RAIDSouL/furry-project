@@ -46,7 +46,7 @@ save_scene     → guardar en disco
 
 ```
 create_scene         → root_type: Node3D
-add_mesh_instance    → agregar primitivas (box, sphere, cylinder, plane) o importar .glb/.gltf
+add_mesh_instance    → agregar primitivas (box, sphere, cylinder, plane) o importar .fbx/.glb/.gltf/.obj
 setup_lighting       → agregar DirectionalLight3D, OmniLight3D o SpotLight3D
 setup_environment    → cielo, luz ambiental, niebla, tonemap
 setup_camera_3d      → cámara con SpringArm3D opcional para tercera persona

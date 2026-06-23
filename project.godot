@@ -12,12 +12,16 @@ config_version=5
 
 config/name="Furry Project"
 run/main_scene="res://Gameplay.tscn"
-config/features=PackedStringArray("4.6", "Forward Plus")
+config/features=PackedStringArray("4.7", "Forward Plus")
 config/icon="res://icon.svg"
 
 [editor_plugins]
 
 enabled=PackedStringArray("res://addons/godot_mcp/plugin.cfg")
+
+[filesystem]
+
+import/blender/enabled=false
 
 [input]
 

@@ -3,6 +3,7 @@ extends "res://addons/godot_mcp/commands/base_command.gd"
 
 const PropertyParser := preload("res://addons/godot_mcp/utils/property_parser.gd")
 const NodeUtils := preload("res://addons/godot_mcp/utils/node_utils.gd")
+const SUPPORTED_MESH_EXTENSIONS := PackedStringArray(["fbx", "glb", "gltf", "obj"])
 
 
 func get_commands() -> Dictionary:
@@ -67,6 +68,23 @@ func _add_child_with_undo(node: Node, parent: Node, root: Node, action_name: Str
 	undo_redo.commit_action()
 
 
+## Imported scene resources are owned by the source file and are effectively
+## read-only in the editor. Return local copies so edits persist in the .tscn.
+func _make_mesh_editable(source: Mesh) -> Mesh:
+	var editable := source.duplicate(true) as Mesh
+	if editable == null:
+		return source
+	editable.resource_local_to_scene = true
+	for surface_index in editable.get_surface_count():
+		var material := editable.surface_get_material(surface_index)
+		if material != null:
+			var editable_material := material.duplicate(true) as Material
+			if editable_material != null:
+				editable_material.resource_local_to_scene = true
+				editable.surface_set_material(surface_index, editable_material)
+	return editable
+
+
 ## ─── 1. add_mesh_instance ──────────────────────────────────────────────────
 
 func _add_mesh_instance(params: Dictionary) -> Dictionary:
@@ -90,15 +108,28 @@ func _add_mesh_instance(params: Dictionary) -> Dictionary:
 	mesh_instance.name = node_name
 
 	if not mesh_file.is_empty():
-		# Load .glb / .gltf / .obj
+		var extension := mesh_file.get_extension().to_lower()
+		if extension not in SUPPORTED_MESH_EXTENSIONS:
+			mesh_instance.queue_free()
+			return error_invalid_params(
+				"Unsupported mesh file extension '.%s'" % extension,
+				"Supported formats: .fbx (ufbx), .glb, .gltf, and .obj"
+			)
+
+		# Godot imports FBX through its built-in ufbx importer and exposes it as a
+		# PackedScene, just like GLB/GLTF scene files.
 		if not ResourceLoader.exists(mesh_file):
 			mesh_instance.queue_free()
-			return error_not_found("Mesh file '%s'" % mesh_file, "Provide a valid res:// path to .glb, .gltf, or .obj")
+			return error_not_found(
+				"Mesh file '%s'" % mesh_file,
+				"Provide an imported res:// path to .fbx, .glb, .gltf, or .obj"
+			)
 		var loaded: Resource = load(mesh_file)
 		if loaded is Mesh:
-			mesh_instance.mesh = loaded as Mesh
+			mesh_instance.mesh = _make_mesh_editable(loaded as Mesh)
 		elif loaded is PackedScene:
-			# For .glb/.gltf we instantiate and steal the first MeshInstance3D's mesh
+			# Scene formats (.fbx/.glb/.gltf) may contain a hierarchy. Extract the
+			# first mesh because this command specifically creates MeshInstance3D.
 			var scene_instance: Node = (loaded as PackedScene).instantiate()
 			var found_mesh: Mesh = null
 			var search_nodes: Array[Node] = [scene_instance]
@@ -113,7 +144,7 @@ func _add_mesh_instance(params: Dictionary) -> Dictionary:
 			if found_mesh == null:
 				mesh_instance.queue_free()
 				return error_invalid_params("No mesh found in '%s'" % mesh_file)
-			mesh_instance.mesh = found_mesh
+			mesh_instance.mesh = _make_mesh_editable(found_mesh)
 		else:
 			mesh_instance.queue_free()
 			return error_invalid_params("'%s' is not a Mesh or PackedScene" % mesh_file)
@@ -156,6 +187,7 @@ func _add_mesh_instance(params: Dictionary) -> Dictionary:
 		"node_path": str(root.get_path_to(mesh_instance)),
 		"name": str(mesh_instance.name),
 		"mesh_type": mesh_type if mesh_file.is_empty() else mesh_file,
+		"editable_local_copy": not mesh_file.is_empty(),
 	})
 
 

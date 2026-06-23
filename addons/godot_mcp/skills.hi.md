@@ -46,7 +46,7 @@ save_scene     → disk पर save करें
 
 ```
 create_scene         → root_type: Node3D
-add_mesh_instance    → primitives (box, sphere, cylinder, plane) जोड़ें या .glb/.gltf import करें
+add_mesh_instance    → primitives (box, sphere, cylinder, plane) जोड़ें या .fbx/.glb/.gltf/.obj import करें
 setup_lighting       → DirectionalLight3D, OmniLight3D, या SpotLight3D जोड़ें
 setup_environment    → sky, ambient light, fog, tonemap
 setup_camera_3d      → camera, optional SpringArm3D के साथ third-person के लिए
