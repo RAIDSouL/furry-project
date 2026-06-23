@@ -1,7 +1,35 @@
 # Changelog / Dev Log
 
-โปรเจกต์ **Furry Project** — Godot 4.6 (Forward+, Jolt Physics, D3D12)
-ฉากหลัก: `Gameplay.tscn`
+โปรเจกต์ **Furry Project** — Godot 4.7 (Forward+, Jolt Physics, D3D12)
+ฉากหลัก: `scenes/Gameplay.tscn`
+
+---
+
+## 2026-06-24 — Isometric mode, project restructure, multiplayer groundwork
+
+### โหมดกล้องที่ 2 — Isometric click-to-move (Lost Ark style)
+
+- ปุ่มสลับโหมดมุมขวาบน หรือกด `Tab` → สลับ **TPS ↔ ISO**
+- **ISO**: กล้อง 3/4 มุมก้ม (`IsoCamera` ตามตัวละคร), **คลิกขวา**บนพื้น = เดินไปจุดนั้น
+  (raycast จากกล้องหา floor), ตัวละครหันหน้าตามทิศ, anim เดิน/วิ่งตามความเร็ว;
+  คลิกซ้ายเว้นไว้เผื่อโจมตี/เลือกเป้าทีหลัง
+- **TPS**: เหมือนเดิม (WASD + เมาส์ + dodge/jump/sprint) — กล้อง/โหมด/เมาส์เป็นของ local
+
+### จัดโครงสร้างไฟล์
+
+- แยก Player เป็น prefab **`scenes/player.tscn`** (Gameplay instance มาใช้ — spawn ซ้ำได้)
+- ย้าย scene เข้าโฟลเดอร์ `scenes/` → main scene = `scenes/Gameplay.tscn`
+- animation idle/walk/run ฝังอยู่ใน `scenes/player.tscn` แล้ว (ติดไปกับ prefab)
+- `.gitignore` ปรับตามมาตรฐาน Godot 4 (`.import/`, `export_presets.cfg`, `*.translation`, mono)
+
+### Multiplayer groundwork (Phase 1)
+
+- เป้าหมาย: **co-op 3 คน** · transport = **ENet (direct IP)** · **client-authoritative**
+- ใส่ `is_multiplayer_authority()` guard ใน `player.gd` → local peer เท่านั้นที่อ่าน input /
+  คุมกล้อง / แสดง HUD (single-player ยังเล่นได้ปกติ)
+- **ค้างไว้ (Phase 2)**: NetworkManager (host / join by IP), หน้าเมนู Host/Join,
+  MultiplayerSpawner (เกิด player ต่อ peer), MultiplayerSynchronizer (sync position/ทิศ/anim/HP),
+  ทำให้ remote player เล่นอนิเมชันจากค่าที่ sync
 
 ---
 
@@ -10,7 +38,7 @@
 สร้างระบบตัวละครเล่นได้แบบ third-person ครบวงจร ขับเคลื่อนด้วย state machine
 อ้างอิงดีไซน์จาก `PLAYER_SYSTEM.md` (ปรับมาใช้กับ Godot)
 
-### ปุ่มควบคุม
+### ปุ่มควบคุม (โหมด TPS)
 
 | ปุ่ม | การทำงาน |
 | --- | --- |
@@ -41,7 +69,7 @@
 
 โมเดล `models/vrc1.glb` (VRoid humanoid, 63 bones) จาก Sketchfab (CC-BY)
 ท่าจาก Mixamo (FBX, In Place) ถูก **retarget แบบ bake เอง** (global-rotation transfer
-ชดเชยความต่างของ rest pose) เข้า skeleton ของโมเดล แล้วฝังเป็น Animation ใน `Gameplay.tscn`
+ชดเชยความต่างของ rest pose) เข้า skeleton ของโมเดล แล้วฝังเป็น Animation ในซีนตัวละคร
 
 - `idle.fbx`, `walking.fbx`, `run.fbx` → animation `idle` / `walk` / `run`
 - `AnimTree` (BlendSpace1D) blend idle(0) → walk(1) → run(2) ตามความเร็วที่ตั้งใจ
@@ -52,7 +80,7 @@
 - **Floor** (StaticBody3D + Jolt collision) 60×60 + กำแพงล่องหน 4 ด้าน (กันตกขอบ)
 - **Grid shader** `shaders/grid.gdshader` — กริด world-space เส้นทุก 1m + เส้นหนาทุก 10m (กะระยะได้)
 - Sun (DirectionalLight + เงา) + WorldEnvironment (procedural sky)
-- HUD: แถบ HP (แดง) + Stamina (ฟ้า)
+- HUD: แถบ HP (แดง) + Stamina (ฟ้า) + ปุ่มสลับโหมด
 
 ### Debug
 
@@ -64,6 +92,7 @@
 - ท่า dodge animation (ตอนนี้ freeze ท่าไว้)
 - ระบบ combat / damage source (โครง Health + i-frame พร้อมแล้ว)
 - ท่า jump / fall animation (ตอนนี้ใช้ blend เดิน/วิ่งกลางอากาศ)
+- multiplayer co-op (Phase 2 — ดู entry ล่าสุด)
 
 ---
 

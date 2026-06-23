@@ -1,16 +1,16 @@
 # Furry Project
 
-เกม 3D third-person บน **Godot 4.6** — ตัวละคร furry พร้อมระบบการเคลื่อนที่สไตล์
-แอ็กชัน (วิ่ง / dodge + i-frame / chain dodge / air dodge) ได้แรงบันดาลใจจาก
-*Naraka: Bladepoint* และ *Granblue Fantasy: Relink*
+เกม 3D บน **Godot 4.7** — ตัวละคร furry พร้อมระบบการเคลื่อนที่สไตล์แอ็กชัน
+(วิ่ง / dodge + i-frame / chain dodge / air dodge) แรงบันดาลใจจาก *Naraka: Bladepoint*
+และ *Granblue Fantasy: Relink* + โหมดกล้อง **isometric click-to-move** แบบ *Lost Ark*
 
-> ฉากหลัก: `Gameplay.tscn` · Renderer: **Forward+** · Physics: **Jolt** · Windows driver: **D3D12**
+> ฉากหลัก: `scenes/Gameplay.tscn` · Renderer: **Forward+** · Physics: **Jolt** · Windows driver: **D3D12**
 
 ---
 
 ## ความต้องการ
 
-- **Godot 4.6** (หรือใหม่กว่า) — เอนจินคือ toolchain ทั้งหมด ไม่มี build step แยก
+- **Godot 4.7** (หรือใหม่กว่า) — เอนจินคือ toolchain ทั้งหมด ไม่มี build step แยก
 - *(ไม่บังคับ)* **Node.js 18+** — เฉพาะถ้าจะใช้ Godot MCP Pro (บริดจ์ให้ AI ช่วยแก้ในเอดิเตอร์)
 
 ## เริ่มต้นใช้งาน
@@ -21,22 +21,24 @@ cd furry-project
 godot --editor --path .      # เปิดในเอดิเตอร์
 ```
 
-กด **▶ (F5)** เพื่อรัน — `Gameplay.tscn` ถูกตั้งเป็น main scene แล้ว
-หรือรันตรงจากคอมมานด์ไลน์:
+กด **▶ (F5)** เพื่อรัน — `scenes/Gameplay.tscn` ถูกตั้งเป็น main scene แล้ว
 
-```sh
-godot --path .
-```
+## โหมดเล่น (สลับด้วยปุ่มมุมขวาบน หรือ `Tab`)
+
+- **TPS** — third-person, เดินด้วย WASD + หมุนกล้องด้วยเมาส์
+- **ISO** — isometric, **คลิกขวา**บนพื้นเพื่อเดินไปจุดนั้น (สไตล์ Lost Ark)
 
 ## ปุ่มควบคุม
 
 | ปุ่ม | การทำงาน |
 | --- | --- |
-| `W A S D` | เดิน (อิงทิศกล้อง) |
+| `Tab` / ปุ่มมุมขวาบน | สลับโหมด TPS ↔ ISO |
+| `W A S D` | เดิน (โหมด TPS, อิงทิศกล้อง) |
+| คลิกขวา | เดินไปตำแหน่งที่คลิก (โหมด ISO) |
 | `Left Ctrl` | สลับวิ่ง (sprint — ไม่กินสตามินา) |
 | `Left Shift` | dodge (หลบ + i-frame + กินสตามินา, chain ได้, กลางอากาศได้ 1 ครั้ง) |
 | `Space` | กระโดด (แตะ = เตี้ย, ค้าง = สูง) |
-| `Mouse` | หมุนกล้อง |
+| `Mouse` | หมุนกล้อง (โหมด TPS) |
 | `Esc` | ปลดล็อกเมาส์ |
 
 รายละเอียดระบบทั้งหมด + ค่าที่ปรับได้ ดูที่ [CHANGELOG.md](CHANGELOG.md)
@@ -44,13 +46,21 @@ godot --path .
 ## โครงสร้างโปรเจกต์
 
 ```
-Gameplay.tscn          ฉากหลัก (player, floor, walls, light, HUD)
-scripts/player.gd      ตัวควบคุมตัวละคร (state machine)
+scenes/
+  Gameplay.tscn        ฉากหลัก (level: floor, walls, light, HUD)
+  player.tscn          prefab ตัวละคร (instance ใน Gameplay / spawn ตอน MP)
+scripts/player.gd      ตัวควบคุมตัวละคร (state machine + 2 โหมดกล้อง)
 shaders/grid.gdshader  พื้นกริด world-space (1m / 10m)
 models/                โมเดลตัวละคร (.glb)
 animations/            ท่าจาก Mixamo (.fbx) ใช้ bake retarget
 addons/godot_mcp/      Godot MCP Pro (ดู CLAUDE.md)
 ```
+
+## สถานะ Multiplayer
+
+กำลังทำ co-op 3 คน (ENet, client-authoritative) — Phase 1 (แยก player prefab +
+authority guards) เสร็จแล้ว, Phase 2 (networking/spawn/sync) อยู่ระหว่างพัฒนา
+ดูรายละเอียดใน [CHANGELOG.md](CHANGELOG.md)
 
 ## พัฒนาด้วย AI (ไม่บังคับ)
 

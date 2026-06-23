@@ -4,7 +4,14 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## Project state
 
-"Furry Project" is a **Godot 4.6** game project. It is currently a fresh skeleton: only `project.godot` and the default `icon.svg` exist — there are no scenes (`.tscn`), scripts (`.gd`/`.cs`), shaders, or a configured main scene yet. Expect to scaffold these from scratch.
+"Furry Project" is a **Godot 4.7** 3D character-action prototype. Main scene: `scenes/Gameplay.tscn`.
+
+- **`scenes/player.tscn`** — the player prefab (`CharacterBody3D` + model + cameras + `AnimTree`), instanced by `Gameplay.tscn` and spawned per-peer for multiplayer. Its controller is **`scripts/player.gd`**: a state machine (Idle/Move/Jump/Dodge) with stamina, dodge (i-frames + chain + one mid-air dodge), coyote/variable jump, and **two camera modes** — TPS (WASD + mouse-look) and ISO (Lost Ark-style right-click-to-move), toggled with `Tab` or the on-screen button.
+- **Animations** (`idle`/`walk`/`run`) are Mixamo FBX retargeted onto the model's skeleton via a custom global-rotation bake and embedded in `player.tscn`; an `AnimationNodeBlendSpace1D` blends them by speed.
+- **`shaders/grid.gdshader`** — world-space grid floor. HUD (HP/Stamina bars + mode button) lives in `Gameplay.tscn`.
+- **Multiplayer** (in progress): targeting 3-player co-op over **ENet, client-authoritative**. `player.gd` already guards local-only logic with `is_multiplayer_authority()`. Networking (NetworkManager, MultiplayerSpawner/Synchronizer, host/join UI) is Phase 2 — not built yet. See `CHANGELOG.md`.
+
+When scaffolding new content, follow the existing layout: scenes in `scenes/`, scripts in `scripts/`, shaders in `shaders/`, imported assets in `models/`/`animations/`.
 
 ## Godot MCP Pro (AI ↔ editor bridge)
 
@@ -27,13 +34,13 @@ The combination of Forward+, Jolt, and a 3D physics engine signals this is inten
 
 ## Common commands
 
-There is no build system, package manager, or test framework — Godot is the toolchain. Run everything through the Godot 4.6 editor/executable (`godot`/`Godot_v4.6...exe`):
+There is no build system, package manager, or test framework — Godot is the toolchain. Run everything through the Godot 4.7 editor/executable (`godot`/`Godot_v4.7...exe`):
 
 ```sh
 # Open the project in the editor
 godot --editor --path .
 
-# Run the project (requires a main scene to be set first; none is configured yet)
+# Run the project (main scene is set: scenes/Gameplay.tscn)
 godot --path .
 
 # Run a specific scene headlessly / directly
