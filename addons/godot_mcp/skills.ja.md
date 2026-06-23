@@ -46,7 +46,7 @@ save_scene     → ディスクに保存
 
 ```
 create_scene         → root_type: Node3D
-add_mesh_instance    → プリミティブ（box、sphere、cylinder、plane）の追加、または.glb/.gltfのインポート
+add_mesh_instance    → プリミティブ（box、sphere、cylinder、plane）の追加、または.fbx/.glb/.gltf/.objのインポート
 setup_lighting       → DirectionalLight3D、OmniLight3D、SpotLight3Dの追加
 setup_environment    → スカイ、アンビエントライト、フォグ、トーンマップ
 setup_camera_3d      → カメラ（オプションでSpringArm3Dによる三人称視点）

@@ -46,7 +46,7 @@ save_scene     → 保存到磁盘
 
 ```
 create_scene         → root_type: Node3D
-add_mesh_instance    → 添加基础体（box、sphere、cylinder、plane）或导入 .glb/.gltf
+add_mesh_instance    → 添加基础体（box、sphere、cylinder、plane）或导入 .fbx/.glb/.gltf/.obj
 setup_lighting       → 添加 DirectionalLight3D、OmniLight3D 或 SpotLight3D
 setup_environment    → 天空、环境光、雾、色调映射
 setup_camera_3d      → 摄像机（可选 SpringArm3D 实现第三人称视角）
