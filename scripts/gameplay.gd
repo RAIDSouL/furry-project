@@ -8,6 +8,8 @@ extends Node3D
 
 @export var player_scene: PackedScene
 
+const MONSTER_SCENE := preload("res://scenes/dummy.tscn")
+
 # Spread spawn points (a square) so co-op players don't overlap — one per player.
 const SPAWN_POINTS := [
 	Vector3(2.0, 1.0, 2.0),
@@ -16,8 +18,17 @@ const SPAWN_POINTS := [
 	Vector3(-2.0, 1.0, -2.0),
 ]
 
+# Where training dummies stand. Spawned by the server (the MultiplayerSpawner
+# replicates them) or directly in single-player.
+const MONSTER_SPAWNS := [
+	Vector3(0.0, 0.0, -6.0),
+	Vector3(4.0, 0.0, -6.0),
+	Vector3(-4.0, 0.0, -6.0),
+]
+
 @onready var _net: Node = get_node("/root/NetworkManager")
 @onready var players: Node3D = $Players
+@onready var monsters: Node3D = $Monsters
 @onready var menu: Control = $NetworkUI/Menu
 @onready var status: Label = $NetworkUI/Menu/Panel/VBox/Status
 @onready var ip_field: LineEdit = $NetworkUI/Menu/Panel/VBox/IP
@@ -50,6 +61,7 @@ func _on_solo() -> void:
 	# Single-player needs no networking — spawn a local player directly so it works
 	# even when the co-op port is busy (e.g. another instance is already hosting).
 	menu.hide()
+	_spawn_world()
 	_spawn_player(1)
 
 
@@ -66,6 +78,7 @@ func _on_join() -> void:
 
 func _start_as_server() -> void:
 	menu.hide()
+	_spawn_world()
 	_spawn_player(multiplayer.get_unique_id())   # host's own player (id 1)
 
 
@@ -113,8 +126,22 @@ func _spawn_player(id: int) -> void:
 	players.add_child(p)                           # MultiplayerSpawner replicates it
 
 
+## Server/solo only: place the training dummies once. The MultiplayerSpawner on
+## $Monsters replicates them to clients (and to late-joiners).
+func _spawn_world() -> void:
+	if monsters.get_child_count() > 0:
+		return
+	for i in MONSTER_SPAWNS.size():
+		var m := MONSTER_SCENE.instantiate()
+		m.name = "Dummy%d" % i
+		m.position = MONSTER_SPAWNS[i]
+		monsters.add_child(m)
+
+
 func _clear_players() -> void:
 	for c in players.get_children():
+		c.queue_free()
+	for c in monsters.get_children():
 		c.queue_free()
 
 

@@ -34,6 +34,7 @@ godot --editor --path .      # เปิดในเอดิเตอร์
 | --- | --- |
 | `Tab` / ปุ่มมุมขวาบน | สลับโหมด TPS ↔ ISO |
 | `W A S D` | เดิน (โหมด TPS, อิงทิศกล้อง) |
+| คลิกซ้าย | ฟัน (โหมด TPS) — โจมตีมอนสเตอร์ |
 | คลิกขวา | เดินไปตำแหน่งที่คลิก (โหมด ISO) |
 | `Left Ctrl` | สลับวิ่ง (sprint — ไม่กินสตามินา) |
 | `Left Shift` | dodge (หลบ + i-frame + กินสตามินา, chain ได้, กลางอากาศได้ 1 ครั้ง) |
@@ -49,7 +50,9 @@ godot --editor --path .      # เปิดในเอดิเตอร์
 scenes/
   Gameplay.tscn        ฉากหลัก (level: floor, walls, light, HUD)
   player.tscn          prefab ตัวละคร (instance ใน Gameplay / spawn ตอน MP)
-scripts/player.gd      ตัวควบคุมตัวละคร (state machine + 2 โหมดกล้อง)
+  dummy.tscn           มอนสเตอร์ซ้อม (HP bar 3D, รับดาเมจ, respawn — spawn ตอน MP)
+scripts/player.gd      ตัวควบคุมตัวละคร (state machine + 2 โหมดกล้อง + ท่าฟัน)
+scripts/dummy.gd       training dummy (server-authoritative, sync HP)
 shaders/grid.gdshader  พื้นกริด world-space (1m / 10m)
 models/                โมเดลตัวละคร (.glb)
 animations/            ท่าจาก Mixamo (.fbx) ใช้ bake retarget

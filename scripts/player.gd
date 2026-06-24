@@ -6,7 +6,7 @@ extends CharacterBody3D
 ## Shift = dodge (i-frames, costs stamina, chains), Space = jump (coyote + variable
 ## height), Mouse = look, Esc = free cursor.
 
-enum State { IDLE, MOVE, JUMP, DODGE }
+enum State { IDLE, MOVE, JUMP, DODGE, ATTACK }
 enum CamMode { TPS, ISO }   # third-person  |  isometric click-to-move (Lost Ark style)
 
 @export_group("Movement")
@@ -35,11 +35,19 @@ enum CamMode { TPS, ISO }   # third-person  |  isometric click-to-move (Lost Ark
 @export var dodge_speed_end: float = 5.0
 @export var chain_window: float = 1.0
 
+@export_group("Attack")
+@export var attack_damage: float = 25.0
+@export var attack_duration: float = 0.45   # total swing time (movement is locked)
+@export var attack_strike: float = 0.18     # when in the swing the hit is registered
+@export var attack_range: float = 1.6       # forward reach of the hit sphere
+@export var attack_radius: float = 1.0      # radius of the hit sphere
+
 @export_group("Health")
 @export var max_health: float = 100.0
 
 const BUFFER_TIME := 0.15
 const DODGE_COSTS := [20.0, 30.0,40.0]   # 1st / 2nd / 3rd+ in a chain
+const ENEMY_LAYER := 4                    # physics layer 3 — enemy hurtboxes
 
 @onready var model: Node3D = $Sketchfab_Scene
 @onready var spring_arm: SpringArm3D = $SpringArm3D
@@ -80,6 +88,10 @@ var _invincible: bool = false
 var _chain: int = 0
 var _since_dodge: float = 999.0
 var _air_dodge_used: bool = false   # one mid-air dodge until you land (GBF Relink style)
+
+# Attack.
+var _attack_timer: float = 0.0
+var _attack_struck: bool = false
 
 # Health.
 var _health: float = 100.0
@@ -153,6 +165,9 @@ func _unhandled_input(event: InputEvent) -> void:
 		if event is InputEventMouseMotion and Input.mouse_mode == Input.MOUSE_MODE_CAPTURED:
 			_yaw -= event.relative.x * mouse_sensitivity
 			_pitch = clampf(_pitch - event.relative.y * mouse_sensitivity, -1.2, 0.4)
+		elif event is InputEventMouseButton and event.pressed and event.button_index == MOUSE_BUTTON_LEFT:
+			_buffer_cmd = "attack"
+			_buffer_timer = BUFFER_TIME
 		elif event.is_action_pressed("ui_cancel"):
 			if Input.mouse_mode == Input.MOUSE_MODE_CAPTURED:
 				Input.mouse_mode = Input.MOUSE_MODE_VISIBLE
@@ -193,6 +208,37 @@ func _try_dodge(move_dir: Vector3, has_input: bool) -> bool:
 	else:
 		_dodge_dir = Vector3(sin(model.rotation.y), 0.0, cos(model.rotation.y))  # facing
 	return true
+
+
+func _start_attack() -> void:
+	_state = State.ATTACK
+	_attack_timer = attack_duration
+	_attack_struck = false
+
+
+## Sweep a sphere in front of the player and damage any enemy hurtboxes it overlaps.
+## Damage is routed to the server (rpc_id 1); in offline solo it runs locally.
+func _do_attack_strike() -> void:
+	var facing := Vector3(sin(model.rotation.y), 0.0, cos(model.rotation.y))
+	var center := global_position + Vector3(0.0, 0.9, 0.0) + facing * attack_range
+	var shape := SphereShape3D.new()
+	shape.radius = attack_radius
+	var params := PhysicsShapeQueryParameters3D.new()
+	params.shape = shape
+	params.transform = Transform3D(Basis(), center)
+	params.collision_mask = ENEMY_LAYER
+	params.collide_with_areas = true
+	params.collide_with_bodies = false
+	var hits := get_world_3d().direct_space_state.intersect_shape(params, 16)
+	var struck := {}
+	for h in hits:
+		var target: Node = h.collider.get_parent()   # hurtbox Area3D -> monster root
+		if target and not struck.has(target) and target.has_method("take_damage"):
+			struck[target] = true
+			if multiplayer.multiplayer_peer == null:
+				target.take_damage(attack_damage)        # offline solo: apply locally
+			else:
+				target.take_damage.rpc_id(1, attack_damage)  # route to the server
 
 
 func _toggle_mode() -> void:
@@ -334,8 +380,13 @@ func _physics_process(delta: float) -> void:
 		_buffer_cmd = ""
 		_try_dodge(move_dir, has_input)
 
-	# --- Jump trigger (locked during dodge). ---
-	if _state != State.DODGE and _buffer_cmd == "jump" and _coyote > 0.0 and _jump_cd <= 0.0:
+	# --- Attack trigger (grounded; a buffered dodge can still cancel it). ---
+	if _state != State.DODGE and _state != State.ATTACK and _buffer_cmd == "attack" and is_on_floor():
+		_buffer_cmd = ""
+		_start_attack()
+
+	# --- Jump trigger (locked during dodge/attack). ---
+	if _state != State.DODGE and _state != State.ATTACK and _buffer_cmd == "jump" and _coyote > 0.0 and _jump_cd <= 0.0:
 		_buffer_cmd = ""
 		velocity.y = sqrt(2.0 * _gravity * jump_height)
 		_jump_cd = jump_cooldown
@@ -359,6 +410,18 @@ func _physics_process(delta: float) -> void:
 				_state = State.JUMP
 			else:
 				_state = State.MOVE if has_input else State.IDLE
+	elif _state == State.ATTACK:
+		# Grounded swing: hold position while it plays. The hit lands once at
+		# `attack_strike`; a buffered dodge (handled above) can cancel it early.
+		_attack_timer -= delta
+		velocity.x = move_toward(velocity.x, 0.0, 40.0 * delta)
+		velocity.z = move_toward(velocity.z, 0.0, 40.0 * delta)
+		_face(move_dir, delta)
+		if not _attack_struck and (attack_duration - _attack_timer) >= attack_strike:
+			_attack_struck = true
+			_do_attack_strike()
+		if _attack_timer <= 0.0:
+			_state = State.MOVE if has_input else State.IDLE
 	else:
 		# Walk / sprint with smooth acceleration; full air control.
 		var target_speed := 0.0
@@ -389,8 +452,8 @@ func _physics_process(delta: float) -> void:
 	if stamina_bar:
 		stamina_bar.value = _stamina
 
-	# --- Animation: freeze during dodge; else blend idle/walk/run by intent. ---
-	if _state == State.DODGE:
+	# --- Animation: freeze during dodge/attack; else blend idle/walk/run by intent. ---
+	if _state == State.DODGE or _state == State.ATTACK:
 		anim_tree.active = false
 	else:
 		anim_tree.active = true
@@ -412,7 +475,7 @@ func _physics_process(delta: float) -> void:
 
 
 func _log_state() -> void:
-	var names := ["idle", "move", "jump", "dodge"]
+	var names := ["idle", "move", "jump", "dodge", "attack"]
 	var label: String = names[_state]
 	if _state == State.MOVE and _sprinting:
 		label = "sprint"

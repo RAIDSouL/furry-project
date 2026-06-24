@@ -78,6 +78,12 @@ shadow_enabled = true
 _spawnable_scenes = PackedStringArray("res://scenes/player.tscn")
 spawn_path = NodePath("../Players")
 
+[node name="Monsters" type="Node3D" parent="." unique_id=1979233523]
+
+[node name="MonsterSpawner" type="MultiplayerSpawner" parent="." unique_id=1979233524]
+_spawnable_scenes = PackedStringArray("res://scenes/dummy.tscn")
+spawn_path = NodePath("../Monsters")
+
 [node name="Walls" type="StaticBody3D" parent="." unique_id=526388898]
 
 [node name="WallNorth" type="CollisionShape3D" parent="Walls" unique_id=951449613]

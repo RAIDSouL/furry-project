@@ -5,6 +5,41 @@
 
 ---
 
+## 2026-06-25 — Combat: melee attack + training dummy (co-op synced)
+
+ของเล่นชิ้นแรกของระบบ combat — **ตีได้ มอนสเตอร์เลือดลด** ทั้ง single-player และ co-op
+
+### ท่าโจมตีผู้เล่น — `scripts/player.gd`
+- เพิ่มสเตต **ATTACK** ในสเตตแมชชีน (Idle/Move/Jump/Dodge/**Attack**)
+- **คลิกซ้าย** (โหมด TPS) = ฟัน 1 ครั้ง — ล็อกการเคลื่อนที่ระหว่างสวิง (`attack_duration` 0.45s),
+  จังหวะโดน (`attack_strike` 0.18s) ยิง sphere ไปข้างหน้า (`attack_range`/`attack_radius`)
+  หาเป้าบน physics layer 3 (enemy hurtbox) แล้วส่งดาเมจ
+- **dodge cancel ได้**: กด dodge ระหว่างฟัน → ยกเลิกท่าทันที (จัดการโดย dodge trigger เดิม)
+- ค่าปรับได้ใน Inspector กลุ่ม **Attack** (damage 25 / duration / strike / range / radius)
+- ยังไม่มีท่าฟันจริง — freeze ท่าไว้ก่อนเหมือน dodge (TODO)
+
+### มอนสเตอร์ตัวแรก — `scenes/dummy.tscn` + `scripts/dummy.gd`
+- **Training dummy** ยืนนิ่ง (StaticBody3D) มี **HP bar 3D** ลอยเหนือหัว (billboard ตามกล้อง,
+  หลอดวิ่งจากซ้าย) + **hit flash** ขาววาบตอนโดน
+- HP หมด → ล้มหาย ปิด collision/hurtbox แล้ว **respawn อัตโนมัติ** หลัง `respawn_delay` (3s)
+- **server-authoritative**: เฉพาะ server (หรือ local peer ตอน solo) เท่านั้นที่คิดดาเมจ/นับ
+  respawn; `_health` sync ผ่าน `MultiplayerSynchronizer` → ทุกเครื่องเห็นเลือด/flash ตรงกัน
+
+### Combat flow (client-authoritative players → server-authoritative monsters)
+- ผู้ตี (peer ไหนก็ได้) ตรวจชนเองในเครื่อง แล้วเรียก `take_damage.rpc_id(1, dmg)` ส่งให้ server
+  คิดดาเมจ — กัน desync, ไม่มีใครยิงเลือดมั่วได้ (offline solo: RPC รันในเครื่องเอง)
+- hurtbox = physics layer 3, ท่าฟันใช้ `intersect_shape` mask layer 3 — body ผู้เล่น (layer 1) ไม่โดน
+
+### โครงสร้างฉาก
+- `Gameplay.tscn`: เพิ่ม `Monsters` (container) + `MonsterSpawner` (MultiplayerSpawner)
+  คู่กับของเดิม; `gameplay.gd` spawn dummy ฝั่ง server/solo (3 ตัวหน้าจุดเกิดผู้เล่น)
+
+### TODO
+- ท่าฟัน/คอมโบจริง (ตอนนี้ฟันเดี่ยว freeze ท่า), attack ในโหมด ISO (ตอนนี้เฉพาะ TPS),
+  มอนสเตอร์ที่ขยับ/ตีกลับ (ดู entry ก่อนหน้าเรื่อง AI)
+
+---
+
 ## 2026-06-24 — Multiplayer Phase 2 (co-op networking)
 
 ต่อจาก groundwork — ตอนนี้ **co-op 1–4 คนเชื่อมต่อ/spawn/sync ได้จริง** (ENet, direct IP,
